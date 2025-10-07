@@ -1,11 +1,15 @@
 package com.company.ams.controller;
 
+import com.company.ams.dto.request.LoginRequest;
 import com.company.ams.dto.request.RegisterUserRequest;
+import com.company.ams.entity.UserEntity;
 import com.company.ams.service.UserService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.naming.AuthenticationException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/user")
@@ -14,10 +18,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/register")
-    public  String registerUser(@RequestBody RegisterUserRequest request) {
+    @PostMapping("/register")
+    public  UserEntity registerUser(@RequestBody UserEntity request) throws BadRequestException {
+     return userService.registerUser(request);
+    }
 
-     userService.registerUser(request);
-     return "List of users";
+    @GetMapping("/fetchAll")
+    public List<UserEntity> getAllUsers() {
+        return userService.fetchAllUsers();
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest loginRequest) {
+        return  userService.userLogin(loginRequest);
     }
 }
+

@@ -5,6 +5,7 @@ import com.company.ams.dto.request.LoginRequest;
 import com.company.ams.entity.UserEntity;
 import com.company.ams.exceptions.AMSException;
 import com.company.ams.repository.UserDetailsRepository;
+import com.company.ams.utils.JwtUtil;
 import com.company.ams.validator.UserValidator;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class UserService {
 
     @Autowired
     UserValidator userValidator;
+    @Autowired
+    JwtUtil jwtUtil;
 
     public UserEntity registerUser(UserEntity request) throws BadRequestException {
         userValidator.validateRegisterRequest(request);
@@ -52,7 +55,9 @@ public class UserService {
             throw new AMSException(EMAIL_NOT_FOUND, "Email not registered. Please register!!");
         }else{
             if(verifyPassword(loginRequest.getPassword(), user.getPassword())){
-                return"Logged In Successfully!!";
+//                return"Logged In Successfully!!";
+                return jwtUtil.generateToken(user);
+
             }
         }
         throw new AMSException(UNAUTHORIZED_USER, "Incorrect Password");
